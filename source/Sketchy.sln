@@ -3,8 +3,59 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{4B81DF56-2FB6-4FCF-B5B4-4A8A36BCE54C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{6B3A9AF1-C0AC-4B26-87F1-A6F1BBAAAFEB}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sketchy.Domain.Workflow", "Sketchy.Domain.Workflow\Sketchy.Domain.Workflow.fsproj", "{8C1E82B0-0453-439F-B9BF-0FE66D6DD910}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sketchy.Domain.Shared", "Sketchy.Domain.Shared\Sketchy.Domain.Shared.fsproj", "{E9DC6BF4-3A02-4D2D-9BF6-51265D0C3F7E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{1BBC6DFC-1591-49C5-B163-DA6A37A0BFAE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{45872DDB-9D2A-4AE4-B96A-1CB4DFE7DF9A}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sketchy.Common", "Sketchy.Common\Sketchy.Common.fsproj", "{E81A252D-A435-423B-8ADC-ACD7FF5CB8B5}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sketchy.Common.Tests", "Sketchy.Common.Tests\Sketchy.Common.Tests.fsproj", "{AD35F647-6420-4658-AB11-2C7179B7CCF8}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sketchy.Domain.Workflow.Tests", "Sketchy.Domain.Workflow.Tests\Sketchy.Domain.Workflow.Tests.fsproj", "{F2E288EA-62E2-42C1-A863-70BDBD6EF862}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8C1E82B0-0453-439F-B9BF-0FE66D6DD910}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C1E82B0-0453-439F-B9BF-0FE66D6DD910}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C1E82B0-0453-439F-B9BF-0FE66D6DD910}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C1E82B0-0453-439F-B9BF-0FE66D6DD910}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9DC6BF4-3A02-4D2D-9BF6-51265D0C3F7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9DC6BF4-3A02-4D2D-9BF6-51265D0C3F7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9DC6BF4-3A02-4D2D-9BF6-51265D0C3F7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9DC6BF4-3A02-4D2D-9BF6-51265D0C3F7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E81A252D-A435-423B-8ADC-ACD7FF5CB8B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E81A252D-A435-423B-8ADC-ACD7FF5CB8B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E81A252D-A435-423B-8ADC-ACD7FF5CB8B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E81A252D-A435-423B-8ADC-ACD7FF5CB8B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD35F647-6420-4658-AB11-2C7179B7CCF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD35F647-6420-4658-AB11-2C7179B7CCF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD35F647-6420-4658-AB11-2C7179B7CCF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD35F647-6420-4658-AB11-2C7179B7CCF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2E288EA-62E2-42C1-A863-70BDBD6EF862}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2E288EA-62E2-42C1-A863-70BDBD6EF862}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2E288EA-62E2-42C1-A863-70BDBD6EF862}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2E288EA-62E2-42C1-A863-70BDBD6EF862}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8C1E82B0-0453-439F-B9BF-0FE66D6DD910} = {4B81DF56-2FB6-4FCF-B5B4-4A8A36BCE54C}
+		{E9DC6BF4-3A02-4D2D-9BF6-51265D0C3F7E} = {4B81DF56-2FB6-4FCF-B5B4-4A8A36BCE54C}
+		{E81A252D-A435-423B-8ADC-ACD7FF5CB8B5} = {1BBC6DFC-1591-49C5-B163-DA6A37A0BFAE}
+		{AD35F647-6420-4658-AB11-2C7179B7CCF8} = {6B3A9AF1-C0AC-4B26-87F1-A6F1BBAAAFEB}
+		{F2E288EA-62E2-42C1-A863-70BDBD6EF862} = {6B3A9AF1-C0AC-4B26-87F1-A6F1BBAAAFEB}
 	EndGlobalSection
 EndGlobal
