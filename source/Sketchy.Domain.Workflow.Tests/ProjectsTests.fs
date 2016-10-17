@@ -7,7 +7,11 @@ module ProjectsTests =
 
     [<Fact>]
     let ``Create project when name is valid should succeed``() = 
-        let project = Projects.Create [""] "project Name"
+        let existingProjectNames = [""]
+        let project = Projects.Create existingProjectNames "project Name"
+        ()
 
-        do Assert.True true
-
+    [<Fact>]
+    let ``Create project when has forbidden charachter should raise exception``() = 
+        let _ = Assert.Throws(typedefof<Projects.InvalidCharachtersPorjectNameException>, (fun() ->  ignore <| Projects.Create [""] "~!@EDS"))
+        ()
