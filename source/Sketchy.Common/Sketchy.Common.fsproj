@@ -55,6 +55,8 @@
     <Compile Include="StringExtensions.fs" />
     <Compile Include="SequenceExtensions.fs" />
     <Content Include="packages.config" />
+    <Compile Include="Result.fs" />
+    <Compile Include="ComputationExpressions.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">

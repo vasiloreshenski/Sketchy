@@ -10,6 +10,8 @@ module internal Workflows =
     type Workflow = 
         { Identity : CommonTypes.Identity
           Shapes : Shapes.Shape list }
+          static member EmptyList: Workflow list = list.Empty
+          
     
     // Create workflow with the specified identity
     let Create(identity : CommonTypes.Identity) = 

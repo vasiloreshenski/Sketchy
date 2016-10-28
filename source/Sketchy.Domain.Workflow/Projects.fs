@@ -1,6 +1,6 @@
 ﻿namespace Sketchy.Domain.Workflow
 
-module private Validation = 
+module ProjectValidation = 
     open Sketchy.Common.StringExtensions
     
     type ProjectNameValidationResult = 
@@ -8,8 +8,15 @@ module private Validation =
         | EmptyOrNull
         | InvalidCharachter
         | InvalidLength
+        | Dublicate
     
-    let ValidateProjectName(name : string) = 
+    let IsNameUnique projectNames name = 
+        projectNames
+        |> Seq.contains name
+        |> not
+
+
+    let ValidateProjectName(name : string) projectNames = 
         let minCharachters = 2
         let maxCharachters = 120
         let allowedCharachters = "1234567890qwertyuiopasdfghjklzxcvbnm.-_ "
@@ -26,21 +33,16 @@ module private Validation =
             | n when n.Length = 0 -> EmptyOrNull
             | n when n.Length < minCharachters || n.Length > maxCharachters -> InvalidLength
             | n when hasForbiddenCharachters n allowedCharachters -> InvalidCharachter
+            | n when IsNameUnique projectNames name -> Dublicate
             | _ -> Valid
         
         result
+    
 
 module internal Projects = 
-    open Sketchy.Domain.Workflow.Workflows
+    open Sketchy.Common.Result
     open Sketchy.Domain.Shared.CommonTypes
-    
-    exception EmptyOrNullProjectNameException
-    
-    exception InvalidCharachtersPorjectNameException of string
-    
-    exception InvalidLengthProjectNameException of string
-    
-    exception DublicateProjectNameException of string
+    open Sketchy.Domain.Workflow.Workflows
     
     /// The project is main container for workflows
     /// Project is describing by identity and name
@@ -48,29 +50,26 @@ module internal Projects =
         { Identity : Identity
           Name : string
           Workflows : Workflow list }
-    
-    /// Creates project by given name
-    /// The project names list is used as validation against dublication of already existing projects with the same name
-    /// If the name is not valid, or the name already exists exception is raised
-    let Create (listOfPorjectNames : string list) name = 
-        let nameValidationResult = Validation.ValidateProjectName name
-        let isProjectNameUnique = listOfPorjectNames |> List.contains name |> not
-        match nameValidationResult with
-        | Validation.Valid when isProjectNameUnique -> 
+        // Creates new project record with empty identity
+        static member CreateWithoutIdentity name workflows = 
             { Identity = Identity.Empty
               Name = name
-              Workflows = [] }
-        | Validation.Valid -> raise (DublicateProjectNameException name)
-        | Validation.EmptyOrNull -> raise (EmptyOrNullProjectNameException)
-        | Validation.InvalidLength -> raise (InvalidLengthProjectNameException name)
-        | Validation.InvalidCharachter -> raise (InvalidCharachtersPorjectNameException name)
+              Workflows = workflows }
+    
+    /// Creates project by given name and workflows
+    /// The result is an option type which fails if the name of the project is not valid
+    let CreateWithWorkflows (listOfProjectNames : string list) name (workflows : Workflow list) = 
+        let nameValidationResult = ProjectValidation.ValidateProjectName name listOfProjectNames
+        match nameValidationResult with
+        | ProjectValidation.Valid -> Value(Project.CreateWithoutIdentity name workflows)
+        | error -> Error [ error ]
+    
+    /// Creates project by given name
+    /// The result is an option type which fails if the name of the project is not valid
+    let Create (listOfProjectNames : string list) name = MaybeResult { let! project = CreateWithWorkflows listOfProjectNames name Workflow.EmptyList
+                                                                       return project }
     
     /// Renames the specified project
-    /// If the project name is invalid or already exists exception is raised
-    let Rename (project : Project) (listOfProjectNames : string list) (name : string) = 
-        let renamedProject = Create listOfProjectNames name
-        
-        let withAttachedWorkflows = 
-            { renamedProject with Workflows = project.Workflows
-                                  Identity = project.Identity }
-        withAttachedWorkflows
+    /// The result is an option type which fails if the name of the project is not valid
+    let Rename (project : Project) (listOfProjectNames : string list) (name : string) = MaybeResult { let! renamed = Create listOfProjectNames name
+                                                                                                      return renamed }
