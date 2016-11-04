@@ -22,7 +22,7 @@ open System.Runtime.InteropServices
 [<assembly: ComVisible(false)>]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[<assembly: Guid("8c1e82b0-0453-439f-b9bf-0fe66d6dd910")>]
+[<assembly: Guid("344ff3b8-28e2-4fde-a427-a0d5f656b8d8")>]
 
 // Version information for an assembly consists of the following four values:
 // 
@@ -36,9 +36,6 @@ open System.Runtime.InteropServices
 // [<assembly: AssemblyVersion("1.0.*")>]
 [<assembly: AssemblyVersion("1.0.0.0")>]
 [<assembly: AssemblyFileVersion("1.0.0.0")>]
-
-// Custom defined
-[<assembly: InternalsVisibleTo("Sketchy.Domain.Workflow.Tests")>]
 
 do
     ()

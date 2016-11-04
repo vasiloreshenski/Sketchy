@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>8c1e82b0-0453-439f-b9bf-0fe66d6dd910</ProjectGuid>
+    <ProjectGuid>344ff3b8-28e2-4fde-a427-a0d5f656b8d8</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Sketchy.Domain.Workflow</RootNamespace>
     <AssemblyName>Sketchy.Domain.Workflow</AssemblyName>
@@ -33,6 +33,26 @@
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>bin\Release\Sketchy.Domain.Workflow.XML</DocumentationFile>
   </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Workflows.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sketchy.Domain.Shared\Sketchy.Domain.Shared.fsproj">
+      <Name>Sketchy.Domain.Shared</Name>
+      <Project>{e9dc6bf4-3a02-4d2d-9bf6-51265d0c3f7e}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
   </PropertyGroup>
@@ -49,34 +69,6 @@
     </Otherwise>
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Shapes.fs" />
-    <Compile Include="Workflows.fs" />
-    <Compile Include="Projects.fs" />
-    <Compile Include="Api.fs" />
-    <Content Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="FSharp.Core">
-      <HintPath>..\packages\FSharp.Core.4.0.0.1\lib\net40\FSharp.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
-    <ProjectReference Include="..\Sketchy.Common\Sketchy.Common.fsproj">
-      <Name>Sketchy.Common</Name>
-      <Project>{e81a252d-a435-423b-8adc-acd7ff5cb8b5}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Sketchy.Domain.Shared\Sketchy.Domain.Shared.fsproj">
-      <Name>Sketchy.Domain.Shared</Name>
-      <Project>{e9dc6bf4-3a02-4d2d-9bf6-51265d0c3f7e}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
