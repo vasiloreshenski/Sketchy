@@ -32,7 +32,7 @@ module private ProjectApiHelper =
         let! result = func arg1 arg2
         return generalizeResult result transformation})
 
-/// Provides capabilities to manupulate and create projects, workflows and shapes
+/// Provides capabilities to manupulate and create projects and workflows
 [<RequireQualifiedAccess>]
 module ProjectApi = 
     open ProjectApiHelper
@@ -50,6 +50,8 @@ module ProjectApi =
         | ProjectDeleted of Identity
         /// Message indicating that project was not deleted
         | ProjectNotDeleted of Project.IProjectDeleteError
+        | ProjectRestored of Identity
+        | ProjectNotRestored of Project.IProjectRestoreError
     
     /// Describies interface for message passing
     /// Used to publish a message containing information about the success or failiure of given operation
@@ -113,26 +115,37 @@ module ProjectApi =
     /// Deletes the project by given identity
     let Delete
             (identity : Identity) 
-            (deleteProject: ProjectRepository.IDeleteProjectByIdentityAsync)
+            (updateProjectState: ProjectRepository.IUpdateProjectStateAsync)
             (publishMessage: IPublishMessage) = 
     
         let generalizationFunc = (fun e -> e :> Project.IProjectDeleteError)
-        let deleteProject = generalize1 generalizationFunc deleteProject
+        let updateProjectState = generalize2 generalizationFunc updateProjectState
         
         let onDelete = (fun project -> publishMessage (ProjectDeleted project.Identity))
         let onError = (fun error -> publishMessage (ProjectNotDeleted error))
         let projectDelete = AsyncResultCallbackCore.AsyncResultCallbackBuilder(onDelete, onError)
         projectDelete {
-            let! deletionResult = deleteProject identity
+            let! deletionResult = updateProjectState identity ProjectState.Deleted
             return deletionResult
         }
     
     /// Restores a deleted project
     /// If the project is not in deleted state, this method has no effect
-    let Restore(projectIdentity : Identity) = ()
+    let Restore(identity : Identity) (updateProjectState: ProjectRepository.IUpdateProjectStateAsync) (publishMessage: IPublishMessage) = 
+        let generalizationFunc = (fun e -> e :> Project.IProjectRestoreError)
+        let updateProjectState = generalize2 generalizationFunc updateProjectState
+
+        let onRestore = (fun p -> publishMessage (ProjectRestored identity))
+        let onError = (fun e -> publishMessage (ProjectNotRestored e))
+        let projectRestore = AsyncResultCallbackCore.AsyncResultCallbackBuilder(onRestore, onError)
+        projectRestore {
+            let! restoreResult = updateProjectState identity ProjectState.Normal
+            return restoreResult
+        }
+        
 
     let Save(identity: Identity) = ()
 
-    let AttachWorkflow(identity: Identity) (workflowName:Name) = ()
+    let AttachWorkflow(identity: Identity) (workflowName: Name) = ()
 
     let RemoveWorkflow(workflowIdentity: Identity) = ()

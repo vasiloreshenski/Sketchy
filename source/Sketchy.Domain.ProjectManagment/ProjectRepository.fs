@@ -18,9 +18,14 @@ module ProjectRepositoryError =
 
     type FetchFailed = FetchFailed interface Project.IProjectCreateOrRenameError
 
-    type UpdateFailed = UpdateFailed of Identity interface Project.IProjectCreateOrRenameError
+    type UpdateFailed = UpdateFailed of Identity 
+                            interface Project.IProjectCreateOrRenameError 
+                            interface Project.IProjectDeleteError
+                            interface Project.IProjectRestoreError
 
     type DeleteFailed = DeleteFailed of Identity interface Project.IProjectDeleteError
+
+    type RestoreFailed = RestoreFailed of Identity interface Project.IProjectRestoreError
 
 /// Exposes interfaces for communication bewtween the project api and a persistance storage
 [<RequireQualifiedAccess>]
@@ -39,9 +44,10 @@ module ProjectRepository =
     /// Interface for retreaving project by identity
     type IFetchProjectByIdentityAsync = Identity -> Async<Result<Project, ProjectRepositoryError.SearchFailed>>
 
-    /// Interfaces for updating project name by given identity
+    /// Interfaces for pesisting the name of a project by given identity
     type IUpdateProjectNameAsync = Identity -> Name -> Async<Result<Project, ProjectRepositoryError.UpdateFailed>>
 
-    type IDeleteProjectByIdentityAsync = Identity -> Async<Result<Project, ProjectRepositoryError.DeleteFailed>>
+    /// Interfaces for persisting the state of a project by identity
+    type IUpdateProjectStateAsync = Identity -> ProjectState -> Async<Result<Project, ProjectRepositoryError.UpdateFailed>>
     
 

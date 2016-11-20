@@ -6,21 +6,27 @@ open Sketchy.Domain.ProjectManagment.Workflow
 open Sketchy.Domain.Shared
 open Sketchy.Domain.Shared.CommonTypes
 
+/// Represents project state
+type ProjectState = 
+| Normal
+| Deleted
+
 /// The project is main container for workflows
 /// Project is describing by identity and name
 type Project = 
     { Identity : Identity
       Name : Name
-      Workflows : Workflow.Workflow list }
+      Workflows : Workflow.Workflow list
+      State: ProjectState }
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 [<RequireQualifiedAccess>]
 module Project = 
 
     type IProjectCreateOrRenameError =  interface end
-
     type IProjectDeleteError = interface end
-    
+    type IProjectRestoreError = interface end
+
     /// Possible errors when operating with project
     /// The result of creation of project is represented by a succes with the created project or by some of the following errors
     type ProjectCreateOrRenameError = 
@@ -40,7 +46,8 @@ module Project =
     let private CreateInternal identity name = 
         { Identity = identity
           Name = name
-          Workflows = Workflow.EmptyList }
+          Workflows = Workflow.EmptyList 
+          State = ProjectState.Normal }
     
     /// Creates Error Result for invalid name
     let private InvalidName (factory: Name -> ProjectCreateOrRenameError) name = Error((factory name) :> IProjectCreateOrRenameError)
@@ -66,6 +73,21 @@ module Project =
             let renamed = { renamed with Workflows = project.Workflows }
             return renamed
         }
+
+    /// Changes the state of the project to Deleted. If the project is already deleted no changes are made
+    let Delete = function
+        | p when p.State = ProjectState.Deleted -> p
+        | p ->
+            let deletedProject = { p with State = ProjectState.Deleted }
+            deletedProject
+    
+    /// Changes the state of the project to Normal. If the porjec is already in normal state no changes are made
+    let RestoreProject = function
+        | p when p.State = ProjectState.Normal -> p
+        | p ->  
+            let restoredProject = { p with State = ProjectState.Normal }
+            restoredProject
+        
     
     /// Appends the workflow to the project
     /// The result is an option type whith the workflow attached to the project.
@@ -74,3 +96,5 @@ module Project =
         match workflow with
         | w when Workflow.IsContained w project.Workflows -> None
         | w -> Some { project with Workflows = w :: project.Workflows }
+
+
