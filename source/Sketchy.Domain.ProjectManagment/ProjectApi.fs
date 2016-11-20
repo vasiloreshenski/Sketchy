@@ -114,32 +114,44 @@ module ProjectApi =
     
     /// Deletes the project by given identity
     let Delete
-            (identity : Identity) 
+            (identity : Identity)
+            (fetchProject: ProjectRepository.IFetchProjectByIdentityAsync)
             (updateProjectState: ProjectRepository.IUpdateProjectStateAsync)
             (publishMessage: IPublishMessage) = 
     
         let generalizationFunc = (fun e -> e :> Project.IProjectDeleteError)
         let updateProjectState = generalize2 generalizationFunc updateProjectState
+        let fetchProject = generalize1 generalizationFunc fetchProject
         
         let onDelete = (fun project -> publishMessage (ProjectDeleted project.Identity))
         let onError = (fun error -> publishMessage (ProjectNotDeleted error))
         let projectDelete = AsyncResultCallbackCore.AsyncResultCallbackBuilder(onDelete, onError)
         projectDelete {
-            let! deletionResult = updateProjectState identity ProjectState.Deleted
+            let! project = fetchProject identity
+            let deletedProject = Project.Delete project
+            let! deletionResult = updateProjectState deletedProject.Identity deletedProject.State
             return deletionResult
         }
     
     /// Restores a deleted project
     /// If the project is not in deleted state, this method has no effect
-    let Restore(identity : Identity) (updateProjectState: ProjectRepository.IUpdateProjectStateAsync) (publishMessage: IPublishMessage) = 
+    let Restore
+            (identity : Identity) 
+            (fetchProject: ProjectRepository.IFetchProjectByIdentityAsync)
+            (updateProjectState: ProjectRepository.IUpdateProjectStateAsync) 
+            (publishMessage: IPublishMessage) = 
+
         let generalizationFunc = (fun e -> e :> Project.IProjectRestoreError)
         let updateProjectState = generalize2 generalizationFunc updateProjectState
+        let fetchProject = generalize1 generalizationFunc fetchProject
 
         let onRestore = (fun p -> publishMessage (ProjectRestored identity))
         let onError = (fun e -> publishMessage (ProjectNotRestored e))
         let projectRestore = AsyncResultCallbackCore.AsyncResultCallbackBuilder(onRestore, onError)
         projectRestore {
-            let! restoreResult = updateProjectState identity ProjectState.Normal
+            let! project = fetchProject identity
+            let restoredProject = Project.Restore project
+            let! restoreResult = updateProjectState restoredProject.Identity restoredProject.State
             return restoreResult
         }
         

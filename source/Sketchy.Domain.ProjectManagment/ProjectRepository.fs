@@ -11,12 +11,17 @@ module ProjectRepositoryError =
         | NotFound of Identity 
         | Failed
         interface Project.IProjectCreateOrRenameError
+        interface Project.IProjectRestoreError
+        interface Project.IProjectDeleteError
     
     type IdentityGenerationFailed = IdentityGenerationFailed interface Project.IProjectCreateOrRenameError
 
     type PersistanceFailed = PersistanceFailed of Identity interface Project.IProjectCreateOrRenameError
 
-    type FetchFailed = FetchFailed interface Project.IProjectCreateOrRenameError
+    type FetchFailed = FetchFailed of Identity
+                        interface Project.IProjectCreateOrRenameError
+                        interface Project.IProjectDeleteError
+                        interface Project.IProjectRestoreError
 
     type UpdateFailed = UpdateFailed of Identity 
                             interface Project.IProjectCreateOrRenameError 

@@ -82,7 +82,7 @@ module Project =
             deletedProject
     
     /// Changes the state of the project to Normal. If the porjec is already in normal state no changes are made
-    let RestoreProject = function
+    let Restore = function
         | p when p.State = ProjectState.Normal -> p
         | p ->  
             let restoredProject = { p with State = ProjectState.Normal }
