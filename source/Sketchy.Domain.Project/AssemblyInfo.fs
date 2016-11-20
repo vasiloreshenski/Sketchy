@@ -1,4 +1,4 @@
-﻿namespace Sketchy.Domain.Workflow.AssemblyInfo
+﻿namespace Sketchy.Domain.ProjectManagment.AssemblyInfo
 
 open System.Reflection
 open System.Runtime.CompilerServices
@@ -7,11 +7,11 @@ open System.Runtime.InteropServices
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[<assembly: AssemblyTitle("Sketchy.Domain.Workflow")>]
+[<assembly: AssemblyTitle("Sketchy.Domain.ProjectManagment")>]
 [<assembly: AssemblyDescription("")>]
 [<assembly: AssemblyConfiguration("")>]
 [<assembly: AssemblyCompany("")>]
-[<assembly: AssemblyProduct("Sketchy.Domain.Workflow")>]
+[<assembly: AssemblyProduct("Sketchy.Domain.ProjectManagment")>]
 [<assembly: AssemblyCopyright("Copyright ©  2016")>]
 [<assembly: AssemblyTrademark("")>]
 [<assembly: AssemblyCulture("")>]
@@ -38,7 +38,7 @@ open System.Runtime.InteropServices
 [<assembly: AssemblyFileVersion("1.0.0.0")>]
 
 // Custom defined
-[<assembly: InternalsVisibleTo("Sketchy.Domain.Project.Tests")>]
+[<assembly: InternalsVisibleTo("Sketchy.Domain.ProjectManagment.Tests")>]
 
 do
     ()

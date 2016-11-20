@@ -64,6 +64,13 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sketchy.Common\Sketchy.Common.fsproj">
+      <Name>Sketchy.Common</Name>
+      <Project>{e81a252d-a435-423b-8adc-acd7ff5cb8b5}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

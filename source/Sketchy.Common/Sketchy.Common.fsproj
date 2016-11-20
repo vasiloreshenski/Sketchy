@@ -52,11 +52,12 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="FunExtensions.fs" />
     <Compile Include="StringExtensions.fs" />
     <Compile Include="SequenceExtensions.fs" />
     <Content Include="packages.config" />
-    <Compile Include="Result.fs" />
-    <Compile Include="ComputationExpressions.fs" />
+    <Compile Include="ResultWorkflow.fs" />
+    <Compile Include="AsyncResultWorkflow.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">
