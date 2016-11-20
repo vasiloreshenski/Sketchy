@@ -3,39 +3,9 @@
 open Sketchy.Common
 open Sketchy.Domain.Shared.CommonTypes
 
-module private ProjectApiHelper = 
-
-    /// Generalize Result error to common type
-    /// The result is the same as the original Result value it the only difference that the wrapped Error value is cast to the provided base type
-    let private generalizeResult result transformation = 
-        match result with
-        | Value v -> Value v
-        | Error e -> Error (transformation e)
-
-    /// Generalize Async Result function wrapped error type to base error type
-    /// The original function does not accept any arguments
-    let generalize transformation func = (fun() -> async {
-        let! result = func()
-        return generalizeResult result transformation
-    })
-
-    /// Generalize Async Result function wrapped error type to base error type 
-    /// The original function accept single argument
-    let generalize1 transformation func = (fun arg -> async {
-        let! result = func(arg)
-        return generalizeResult result transformation
-     })
-
-    /// Generalize Async Result function wrapped Error type to base error type
-    /// The original function accepts two arguments
-    let generalize2 transformation func = (fun arg1 arg2 -> async {
-        let! result = func arg1 arg2
-        return generalizeResult result transformation})
-
 /// Provides capabilities to manupulate and create projects and workflows
 [<RequireQualifiedAccess>]
 module ProjectApi = 
-    open ProjectApiHelper
 
     type ProjectOperationMessages = 
         /// Message indicating that project was created
@@ -50,7 +20,9 @@ module ProjectApi =
         | ProjectDeleted of Identity
         /// Message indicating that project was not deleted
         | ProjectNotDeleted of Project.IProjectDeleteError
+        /// Message indicating that project was restored
         | ProjectRestored of Identity
+        /// Message indicating that project was not restored
         | ProjectNotRestored of Project.IProjectRestoreError
     
     /// Describies interface for message passing
@@ -69,19 +41,19 @@ module ProjectApi =
         
         let generalizationFunc = (fun e -> e :> Project.IProjectCreateOrRenameError)
 
-        let identityGen = generalize generalizationFunc identityGen
-        let fetchProjectNames = generalize generalizationFunc fetchProjectNames
-        let projectPersist = generalize1 generalizationFunc projectPersist
+        let identityGen = Result.generalizeError generalizationFunc identityGen
+        let fetchProjectNames = Result.generalizeError generalizationFunc fetchProjectNames
+        let projectPersist = Result.generalizeError1 generalizationFunc projectPersist
 
         let onError = (fun e -> publishMessage (ProjectNotCreated e))
         let onReturn = (fun v -> publishMessage (ProjectCreated v.Identity))
 
         // workflow for handling async result types with message sending mechanisms
-        let projectCreation = AsyncResultCallbackCore.AsyncResultCallbackBuilder(onReturn, onError)
+        let projectCreation = AsyncResultCallback.AsyncResultCallbackBuilder(onReturn, onError)
         projectCreation { 
             let! identity = identityGen()
             let! projectNames = fetchProjectNames()
-            let! project = AsyncResultCore.FromResult(Project.Create identity name projectNames)
+            let! project = AsyncResult.FromResult(Project.Create identity name projectNames)
             let! _ = projectPersist project
             return project
         }
@@ -97,17 +69,17 @@ module ProjectApi =
          
         let generalizationFunc = (fun e -> e :> Project.IProjectCreateOrRenameError)
        
-        let fetchProjectByIdentity = generalize1 generalizationFunc fetchProjectByIdentity
-        let fetchProjectNames = generalize generalizationFunc fetchProjectNames
-        let updateProjectName = generalize2 generalizationFunc updateProjectName
+        let fetchProjectByIdentity = Result.generalizeError1 generalizationFunc fetchProjectByIdentity
+        let fetchProjectNames = Result.generalizeError generalizationFunc fetchProjectNames
+        let updateProjectName = Result.generalizeError2 generalizationFunc updateProjectName
 
         let onError = (fun e -> publishMessage (ProjectNotRenamed e))
         let onRenamed = (fun v -> publishMessage (ProjectRenamed (v.Identity, v.Name)))
-        let projectRename = AsyncResultCallbackCore.AsyncResultCallbackBuilder(onRenamed, onError)
+        let projectRename = AsyncResultCallback.AsyncResultCallbackBuilder(onRenamed, onError)
         projectRename {
             let! project = fetchProjectByIdentity identity
             let! projectNames = fetchProjectNames()
-            let! renamedProject = AsyncResultCore.FromResult(Project.Rename project name projectNames)
+            let! renamedProject = AsyncResult.FromResult(Project.Rename project name projectNames)
             let! renamedPersistanceResult = updateProjectName renamedProject.Identity renamedProject.Name
             return renamedPersistanceResult
         }
@@ -120,12 +92,12 @@ module ProjectApi =
             (publishMessage: IPublishMessage) = 
     
         let generalizationFunc = (fun e -> e :> Project.IProjectDeleteError)
-        let updateProjectState = generalize2 generalizationFunc updateProjectState
-        let fetchProject = generalize1 generalizationFunc fetchProject
+        let updateProjectState = Result.generalizeError2 generalizationFunc updateProjectState
+        let fetchProject = Result.generalizeError1 generalizationFunc fetchProject
         
         let onDelete = (fun project -> publishMessage (ProjectDeleted project.Identity))
         let onError = (fun error -> publishMessage (ProjectNotDeleted error))
-        let projectDelete = AsyncResultCallbackCore.AsyncResultCallbackBuilder(onDelete, onError)
+        let projectDelete = AsyncResultCallback.AsyncResultCallbackBuilder(onDelete, onError)
         projectDelete {
             let! project = fetchProject identity
             let deletedProject = Project.Delete project
@@ -142,12 +114,12 @@ module ProjectApi =
             (publishMessage: IPublishMessage) = 
 
         let generalizationFunc = (fun e -> e :> Project.IProjectRestoreError)
-        let updateProjectState = generalize2 generalizationFunc updateProjectState
-        let fetchProject = generalize1 generalizationFunc fetchProject
+        let updateProjectState = Result.generalizeError2 generalizationFunc updateProjectState
+        let fetchProject = Result.generalizeError1 generalizationFunc fetchProject
 
         let onRestore = (fun p -> publishMessage (ProjectRestored identity))
         let onError = (fun e -> publishMessage (ProjectNotRestored e))
-        let projectRestore = AsyncResultCallbackCore.AsyncResultCallbackBuilder(onRestore, onError)
+        let projectRestore = AsyncResultCallback.AsyncResultCallbackBuilder(onRestore, onError)
         projectRestore {
             let! project = fetchProject identity
             let restoredProject = Project.Restore project
