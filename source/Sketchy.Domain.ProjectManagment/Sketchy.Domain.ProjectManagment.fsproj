@@ -51,8 +51,8 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Validation.fs" />
     <Compile Include="Workflow.fs" />
-    <Compile Include="ProjectValidation.fs" />
     <Compile Include="Project.fs" />
     <Compile Include="ProjectRepository.fs" />
     <Compile Include="ProjectApi.fs" />

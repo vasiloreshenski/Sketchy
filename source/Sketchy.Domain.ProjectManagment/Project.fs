@@ -1,8 +1,6 @@
 ﻿namespace Sketchy.Domain.ProjectManagment
 
 open Sketchy.Common
-open Sketchy.Common.ResultCore
-open Sketchy.Domain.ProjectManagment.Workflow
 open Sketchy.Domain.Shared
 open Sketchy.Domain.Shared.CommonTypes
 
@@ -16,7 +14,7 @@ type ProjectState =
 type Project = 
     { Identity : Identity
       Name : Name
-      Workflows : Workflow.Workflow list
+      Workflows : Workflow list
       State: ProjectState }
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
@@ -57,18 +55,18 @@ module Project =
     let Create (identity : Identity) name (otherProjectNames : Name list) = 
         let creationResult = 
             match identity, name with
-            | _, ProjectValidation.DublicateNamePattern otherProjectNames -> InvalidName DublicateName name
-            | IdentityCore.IsNotEmpty, ProjectValidation.ValidNamePattern -> Value(CreateInternal identity name)
-            | _, ProjectValidation.TooShortNamePattern -> InvalidName TooShortName name
-            | _, ProjectValidation.TooLongNamePattern -> InvalidName TooLongName name
-            | _, ProjectValidation.InvalidCharachterInNamePattern -> InvalidName InvalidCharachterInName name
-            | IdentityCore.IsEmpty, ProjectValidation.ValidNamePattern -> Error (EmptyIdentity :> IProjectCreateOrRenameError)
+            | _, Validation.DublicateNamePattern otherProjectNames -> InvalidName DublicateName name
+            | IdentityCore.IsNotEmpty, Validation.ValidNamePattern -> Value(CreateInternal identity name)
+            | _, Validation.TooShortNamePattern -> InvalidName TooShortName name
+            | _, Validation.TooLongNamePattern -> InvalidName TooLongName name
+            | _, Validation.InvalidCharachterInNamePattern -> InvalidName InvalidCharachterInName name
+            | IdentityCore.IsEmpty, Validation.ValidNamePattern -> Error (EmptyIdentity :> IProjectCreateOrRenameError)
         creationResult
     
     /// Renames the specified project
     /// The result is an option type which fails if the name of the project is not valid
     let Rename project name otherProjectNames = 
-        Result { 
+        Result.Result { 
             let! renamed = Create project.Identity name otherProjectNames
             let renamed = { renamed with Workflows = project.Workflows }
             return renamed

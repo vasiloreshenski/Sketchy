@@ -2,7 +2,6 @@
 
 open Sketchy.Domain.Shared.CommonTypes
 open Sketchy.Common
-open Sketchy.Common.ResultCore
 
 [<RequireQualifiedAccess>]
 module ProjectRepositoryError = 
@@ -54,5 +53,7 @@ module ProjectRepository =
 
     /// Interfaces for persisting the state of a project by identity
     type IUpdateProjectStateAsync = Identity -> ProjectState -> Async<Result<Project, ProjectRepositoryError.UpdateFailed>>
+
+    type IPersistWorkflow = Identity -> Workflow -> Async<Result<Project, ProjectRepositoryError.UpdateFailed>>
     
 

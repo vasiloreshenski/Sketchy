@@ -130,6 +130,10 @@ module ProjectApi =
 
     let Save(identity: Identity) = ()
 
-    let AttachWorkflow(identity: Identity) (workflowName: Name) = ()
+    let AttachWorkflow
+        (identity: Identity) 
+        (workflowName: Name) = 
+        
+        ()
 
     let RemoveWorkflow(workflowIdentity: Identity) = ()
